@@ -31,28 +31,51 @@ function writeToLog(
     }
 
 function calculateResult(calculationType){
-    const enteredNumber = getUserNumberInput();
-    const initialResult = currentResult;
-    let mathOperator;
-    if (calculationType === 'ADD') {
-        currentResult += enteredNumber;
-        mathOperator = '+'
-    } else if(calculationType === 'SUBTRACT') {
-        currentResult -= enteredNumber;
-        mathOperator = '-'
-    } else if(calculationType === 'MULTIPLY'){
-        currentResult *= enteredNumber;
-        mathOperator = '*'
-    } else if(calculationType === 'DIVIDE'){
-        currentResult /= enteredNumber;
-        mathOperator = '/'
+    if (calculationType !== 'ADD' &&
+    calculationType !== 'SUBTRACT' &&
+    calculationType !== 'MULTIPLY' &&
+    calculationType !== 'DIVIDE'
+    ){
+        return
     }
-    
-    createAndWriteOutput(mathOperator,initialResult,enteredNumber);
-    writeToLog('ADD',initialResult,enteredNumber,currentResult)
-    
-    }
+    // AND 연산자는 하위 조건문이 전부 참이여야 참을 반환함
 
+    // if (
+    //     calculationType === 'ADD' ||
+    //     calculationType === 'SUBTRACT' ||
+    //     calculationType === 'MULTIPLY' ||
+    //     calculationType === 'DIVIDE'
+    // ){
+        const enteredNumber = getUserNumberInput();
+        const initialResult = currentResult;
+        let mathOperator;
+        if (calculationType === 'ADD') {
+            currentResult += enteredNumber;
+            mathOperator = '+'
+        } else if(calculationType === 'SUBTRACT') {
+            currentResult -= enteredNumber;
+            mathOperator = '-'
+        } else if(calculationType === 'MULTIPLY'){
+            currentResult *= enteredNumber;
+            mathOperator = '*'
+        } else if(calculationType === 'DIVIDE'){
+            currentResult /= enteredNumber;
+            mathOperator = '/'
+        }
+        
+        createAndWriteOutput(mathOperator,initialResult,enteredNumber);
+        writeToLog('ADD',initialResult,enteredNumber,currentResult)
+        
+        }
+    
+
+    // OR 연산자를 쓰면 하위 조건문이 참일 경우 전체가 참이 된다
+
+    // return키워드를 함수에서 사용한다는건 함수가 값을 반환한다는 것
+    // return뒤에 작성된 코드는 실행되지 않는다는 것
+
+   
+    //. if 문에서는 두 개 이상의 블록을 실행하지 않습니다. 조건이 충족되지 않고 (필수 항목이 아닌) else 블록이 없으면 코드가 실행되지 않습니다.
 function add() {
 
     calculateResult('ADD')
@@ -69,27 +92,15 @@ function add() {
 }
 
 function subtract(){
-    const enteredNumber = getUserNumberInput();
-    const initialResult = currentResult
-    currentResult -= enteredNumber;
-    createAndWriteOutput('-',initialResult,enteredNumber)
-    writeToLog('SUBTRACT',initialResult,enteredNumber,currentResult)
+    calculateResult('SUBTRACT')
 }
 
 function multiply(){
-    const enteredNumber = getUserNumberInput();
-    const initialResult = currentResult
-    currentResult *= enteredNumber;
-    createAndWriteOutput('*',initialResult,enteredNumber)
-    writeToLog('MULTIPLY',initialResult,enteredNumber,currentResult)
+    calculateResult('MULTIPLY')
 }
 
 function divide(){
-    const enteredNumber = getUserNumberInput();
-    const initialResult = currentResult
-    currentResult /= enteredNumber;
-    createAndWriteOutput('/',initialResult,enteredNumber)
-    writeToLog('DIVIDE',initialResult,enteredNumber,currentResult)
+    calculateResult('DIVIDE')
 }
 
 addBtn.addEventListener('click', add);
