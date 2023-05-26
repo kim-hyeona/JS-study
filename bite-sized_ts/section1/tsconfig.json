@@ -1,0 +1,16 @@
+{
+ "compilerOptions": {
+    /* "target": "ES5" */ //컴파일시 생성된 자바스크립트 버전
+      "target":"ESNext", //ESNext: 자바스크립트 최신버전을 의미
+      // "module": "CommonJS"
+      "module": "ESNext", //최신 모듈시스템 설정
+      "outDir": "dist", // 컴파일된 js파일을 dist에 넣겠다는 뜻
+     /*  "strict": true // 엄격한 타입검사 모드 */
+      "strict": false, // 엄격한 타입검사 해지
+      "moduleDetection": "force"//moduleDetection 타입스크립트가 각각의 파일을 어떤 모듈로 볼것인가 설정함
+      },                          //force 개인모듈
+      "ts-node": {
+        "esm": true
+      },
+      "include": ["src"] //src라는 경로안에 있는 모든파일 컴파일  터미널창에는 그냥 tsc만 쳐주면 됨
+}                   

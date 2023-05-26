@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 console.log("hello typescrirt");
 const a = 1;
 /*
@@ -22,6 +20,5 @@ ts-node src/index.ts // 타입스크립트 한방에 실행
     tsc --init //초기화
     
 */
-const test_1 = require("./test");
-(0, test_1.hello)();
-// commonJS 
+import { hello } from "./test";
+hello();
