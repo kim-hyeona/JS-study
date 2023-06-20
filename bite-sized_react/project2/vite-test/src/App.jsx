@@ -5,14 +5,44 @@
   앞글자만 따서 CRUD라고 하며 CRUD는 데이터 처리의 기본 기능으로
   웹서비스라면 기본적으로 갖추고 있어야 한다.
 */
+/* 
+  useState를 useReducer로 바꾸기
+  useReducer는 State를 관리하는 리액트 훅으로 useState의 대체제로 쓰인다
+  실무에서는 컴포넌트를 관리하는 State가 복잡하지 않으면 useState를 사용하고
+  복잡하면 useRedcer를 사용한다
+  
+  // App컴포넌트의 State를 이제 useRedcer로 변경한다
+*/
 
 
-
-import { useState,useRef } from "react"
+import { useState,useRef,useReducer } from "react"
 import Header from "./components/Header"
 import TodoEditor from "./components/TodoEditor"
 import TodoList from "./components/TodoList"
 import "./style/App.css"
+import TestComp from "./components/TestComp"
+
+function redcer(state, action) {
+  switch (action.type){
+    case "CREATE":{
+      return [action.newItem, ...state];
+    }
+    case "UPDATE": {
+      return state.map((it) =>
+      it.id === action.targetId
+      ?{
+        ...it,
+        isDone: !it.isDone,
+      }: it
+      );
+    }
+    case "DELETE":{
+      return state.filter((it) => it.id !== action.targetId);
+    }
+    default:
+      return state;
+  }
+}
 
 function App() {
 
@@ -52,7 +82,10 @@ function App() {
   변수 todo는 할일관리 앱에서 데이터를 저장하는 배열이면서 동시에 일종의 데이터베이스 역할을 수행
   새 할일 아이템을 만들면 빈 배열이였던 todo값은 아이템이 추가된 배열로 업데이트됨 */
    
-  const [todo, setTodo] = useState(mockTodo); 
+  // const [todo, setTodo] = useState(mockTodo); 
+
+
+  const [todo,dispatch] = useReducer(redcer,mockTodo)
 
   // 데이터 모델링하기
   /* 현실의 사물이나 개념을 프로그래밍 언어의 객체와 같은 자료구조로 표현하는 행위를 
@@ -81,16 +114,27 @@ function App() {
  // 앞서 작성한 목 데이터의 id가 0 1 2이기 때문에 초기값 3
       
   const onCreate = (content) => { // TodoEditor 컴포넌트에서 추가버튼을 누르면 호출할 함수
-    const newItem = { // TodoEditor 컴포넌트에서 사용자가 작성한 할일 데이터를 받아 매개변수 content에 저장하고 그것을 토대로 새 할일 아이템 객체를 만들어 newItem에 저장
-      id:idRef.current, // idRef의 현잿값을 새롭게 추가할 할 일 아이템의 id로 지정 만약 아이템이 처음으로 추가되는 경우라면 해당 아이템의 id는 3
-      content,
-      isDone: false,
-      createdDate: new Date().getTime(),
-    };
-    setTodo([newItem,...todo]) // 배열의 스프레드 연산자를 활용해 newItem을 포함한 새 배열을 만들어 State 변수 todo를 이용해 업데이트
-    // 이렇게 작성하면 새롭게 추가된 아이템은 항상 배열의 0번요소가 된다
+    // const newItem = { // TodoEditor 컴포넌트에서 사용자가 작성한 할일 데이터를 받아 매개변수 content에 저장하고 그것을 토대로 새 할일 아이템 객체를 만들어 newItem에 저장
+    //   id:idRef.current, // idRef의 현잿값을 새롭게 추가할 할 일 아이템의 id로 지정 만약 아이템이 처음으로 추가되는 경우라면 해당 아이템의 id는 3
+    //   content,
+    //   isDone: false,
+    //   createdDate: new Date().getTime(),
+    // };
+    // setTodo([newItem,...todo]) // 배열의 스프레드 연산자를 활용해 newItem을 포함한 새 배열을 만들어 State 변수 todo를 이용해 업데이트
+    // // 이렇게 작성하면 새롭게 추가된 아이템은 항상 배열의 0번요소가 된다
+
+    dispatch({
+      type:"CREATE",
+      newItem:{
+        id: idRef.current,
+        content,
+        isDone: false,
+        createdDate: new Date().getTime(),
+      },
+    });
     idRef.current +=1;// idRef의 현재값을 +1 아이템을 추가할 때마다 현재값이 1씩 늘어나며 모든 아이템은 고유한 id를 가지게됨
   }
+
 
   // Read: 할 일 리스트 렌더링하기
 /* TodoList 컴포넌트 기능인 Read 기능 만들기*/
@@ -113,29 +157,40 @@ function App() {
 // 아이템 수정 함수
 
 const onUpdate = (targetId) => { //매개변수 targetId로 틱이 발생한 할일 아이템의 id를 저장
-  setTodo(
-    todo.map( // todo값을 업데이트하기 위해서 함수 setTodo를 호출
-      (it) => { //map메서드를 이용해 배열 todo에서 
-        if(it.id === targetId){ // id가 targetId와 일치하는 요소를 찾으면
-          return{ // isDone 프로퍼티값을 토글한 새 배열을 만들어 인수로 전달
-            ...it,
-            isDone: !it.isDone,
-          };
-        } else {
-          return it;
-        }
-      }
-    )
-  )
+  // setTodo(
+  //   todo.map( // todo값을 업데이트하기 위해서 함수 setTodo를 호출
+  //     (it) => { //map메서드를 이용해 배열 todo에서 
+  //       if(it.id === targetId){ // id가 targetId와 일치하는 요소를 찾으면
+  //         return{ // isDone 프로퍼티값을 토글한 새 배열을 만들어 인수로 전달
+  //           ...it,
+  //           isDone: !it.isDone,
+  //         };
+  //       } else {
+  //         return it;
+  //       }
+  //     }
+  //   )
+  // )
+  dispatch({
+    type:"UPDATE",
+    targetId,
+  })
 };
 
 // 아이템 삭제 함수
 const onDelete = (targetId) => {
-  setTodo(todo.filter((it) => it.id !== targetId));
+  // setTodo(todo.filter((it) => it.id !== targetId));
+  dispatch({
+    type: "DELETE",
+    targetId,
+  });
 }
+
+
 
   return (
     <div className="App">
+      <TestComp/>
       <Header/>
       <TodoEditor onCreate={onCreate}/>
       <TodoList todo={todo} onUpdate={onUpdate} onDelete={onDelete} />
